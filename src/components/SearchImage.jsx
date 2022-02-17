@@ -27,14 +27,14 @@ class App extends Component {
       this.setState({
         loading: true,
       });
-      this.apiService();
+      this.apiServiceEl();
     }
   }
 
-  async apiService() {
+  async apiServiceEl() {
     const { search, page } = this.state;
     try {
-      const data = await apiService(page, search);
+      const data = await apiService(search, page);
       this.setState(prevState => {
         return {
           images: [...prevState.images, ...data],
@@ -50,8 +50,12 @@ class App extends Component {
     }
   }
 
-  changeSearch = ({ search }) => {
-    this.setState({ search, images: [] });
+  changeSearch = search => {
+    if (search) {
+      this.setState({ search, images: [] });
+    } else {
+      this.setState({ images: [], error: 'Пожалуйста введите текст!' });
+    }
   };
 
   onLoadMore = () => {
@@ -76,13 +80,6 @@ class App extends Component {
     });
   };
 
-  findPic = () => {
-    const largeImg = this.state.images.find(image => {
-      return image.id === this.state.largeImageId;
-    });
-    return largeImg;
-  };
-
   render() {
     const { changeSearch, onLoadMore, showModal, hideModal } = this;
     const { loading, error, images, search, modalOpen, modalContent } =
@@ -93,21 +90,22 @@ class App extends Component {
         <div className={styles.searchContainer}>
           <Searchbar onSubmit={changeSearch} />
         </div>
+        {error && <p> {error}</p>}
+        {!images.length && search && !loading && !error && (
+          <p>По запросу ничего не найдено!</p>
+        )}
+
         <ImageGallery onOpenModal={showModal} images={images} />
         {loading && <LoaderComponent />}
-        {error && <p>Ошибка поиска</p>}
-        {!images.length && search && !loading && !error && (
-          <p>Ничего не найдено</p>
-        )}
-        {!loading && images.length >= 12 && !error && (
-          <Button onLoadMore={onLoadMore} />
-        )}
         {modalOpen && (
           <Modal handleClose={hideModal}>
             <div className={styles.imageBox}>
               <img src={modalContent.largeImageURL} alt={modalContent.tags} />
             </div>
           </Modal>
+        )}
+        {!loading && images.length >= 12 && !error && (
+          <Button onLoadMore={onLoadMore} />
         )}
       </div>
     );
