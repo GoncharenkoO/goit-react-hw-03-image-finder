@@ -27,17 +27,24 @@ class App extends Component {
       this.setState({
         loading: true,
       });
-      this.apiServiceEl();
+      this.fetchPosts();
     }
   }
 
-  async apiServiceEl() {
+  onSubmit = e => {
+    this.setState({
+      posts: [],
+      search: e.query,
+    });
+  };
+
+  async fetchPosts() {
     const { search, page } = this.state;
     try {
-      const data = await apiService(search, page);
+      const data = await apiService(page, search);
       this.setState(prevState => {
         return {
-          images: [...prevState.images, ...data],
+          images: [...prevState.images, ...data.hits],
           loading: false,
           error: null,
         };
@@ -105,7 +112,7 @@ class App extends Component {
           </Modal>
         )}
         {!loading && images.length >= 12 && !error && (
-          <Button onLoadMore={onLoadMore} />
+          <Button onLoadMore={onLoadMore} text="Load more" />
         )}
       </div>
     );

@@ -3,7 +3,6 @@ import ImageGalleryItem from '../ImageGalleryItem';
 import styles from './imageGallery.module.css';
 
 function ImageGallery({ images, onOpenModal }) {
-  console.log(images);
   const element = images.map(image => (
     <ImageGalleryItem
       onClick={() => onOpenModal(image)}
@@ -16,7 +15,12 @@ function ImageGallery({ images, onOpenModal }) {
 
 export default ImageGallery;
 
+ImageGallery.defaultProps = {};
 ImageGallery.propTypes = {
-  images: PropTypes.array.isRequired,
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+    })
+  ).isRequired,
   onOpenModal: PropTypes.func.isRequired,
 };
