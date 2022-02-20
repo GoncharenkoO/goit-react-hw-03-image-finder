@@ -33,7 +33,7 @@ class App extends Component {
 
   onSubmit = e => {
     this.setState({
-      posts: [],
+      images: [],
       search: e.query,
     });
   };
